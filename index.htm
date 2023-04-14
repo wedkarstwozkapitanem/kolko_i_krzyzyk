@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Kółko i krzyżyk,graj teraz, z kapitanem">
+    <title>Kółko i krzyżyk</title>
+</head>
+
+<body>
+
+    <div id="tura">Tura przeciwnika:<b>O</b></div>
+    <div id="plansza"></div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+    </script>
+    <script>
+
+        var wykonaneruchy = {
+            p1: null,
+            p2: null,
+            p3: null,
+            p4: null,
+            p5: null,
+            p6: null,
+            p7: null,
+            p8: null,
+            p9: null,
+        }
+
+
+        //var wykonaneruchy = [];
+
+        function sprawdzzwyciesce(t) {
+            if (wykonaneruchy.p1 == t && wykonaneruchy.p2 == t && wykonaneruchy.p3 == t) {
+                alert('Wygrywa ' + t);
+
+            } else if (wykonaneruchy.p4 == t && wykonaneruchy.p5 == t && wykonaneruchy.p6 == t) {
+                alert('Wygrywa ' + t);
+                wypisz();
+            } else if (wykonaneruchy.p7 == t && wykonaneruchy.p8 == t && wykonaneruchy.p8 == t) {
+                alert('Wygrywa ' + t);
+                wypisz();
+            } else if (wykonaneruchy.p1 == t && wykonaneruchy.p4 == t && wykonaneruchy.p7 == t) {
+                alert('Wygrywa ' + t);
+                wypisz();
+            } else if (wykonaneruchy.p2 == t && wykonaneruchy.p5 == t && wykonaneruchy.p8 == t) {
+                alert('Wygrywa ' + t);
+                wypisz();
+            } else if (wykonaneruchy.p3 == t && wykonaneruchy.p6 == t && wykonaneruchy.p9 == t) {
+                alert('Wygrywa ' + t);
+                wypisz();
+            } else if (wykonaneruchy.p3 == t && wykonaneruchy.p5 == t && wykonaneruchy.p7 == t) {
+                alert('Wygrywa ' + t);
+                wypisz();
+            } else if (wykonaneruchy.p1 == t && wykonaneruchy.p5 == t && wykonaneruchy.p9 == t) {
+                alert('Wygrywa ' + t);
+                wypisz();
+            }
+
+
+            if (t == "O") {
+                sprawdzzwyciesce('X');
+            }
+
+
+            socket.emit('w', wykonaneruchy);
+        }
+
+
+        function wypisz() {
+            for (i=1;i<=9;i++) {
+                wykonaneruchy['p' + i] = null;
+            }
+            document.getElementById('plansza').innerHTML = "";
+            for (i = 1; i <= 9; i++) {
+                document.getElementById('plansza').innerHTML += "<div onclick='pixi(" + i + ")' class='opcja' id='opcja" + i + "' ></div>";
+            }
+        }
+
+        window.onload = function () {
+            wypisz();
+        }
+        var tura = "O";
+        function pixi(event) {
+            document.getElementById('opcja' + event).innerHTML = tura;
+            wykonaneruchy['p' + event] = tura;
+            if (tura == 'O') {
+                tura = "X";
+            } else {
+                tura = "O"
+            }
+            document.querySelector('#tura b').innerHTML = tura;
+            document.getElementById('opcja' + event).onclick = null;
+
+
+            for (i = 1; i <= 9; i++) {
+
+                if (wykonaneruchy['p' + i] == 'O' && wykonaneruchy['p' + parseFloat(i) + parseFloat(1)] == "O" && wykonaneruchy['p' + parseFloat(i) + parseFloat(2)] == "O") {
+                    alert('pixi');
+                } else if (wykonaneruchy['p' + i] == 'X' && wykonaneruchy['p' + parseFloat(i) + parseFloat(1)] == "X" && wykonaneruchy['p' + parseFloat(i) + parseFloat(2)] == "X") {
+                    alert('pixi');
+                }
+            }
+            sprawdzzwyciesce('O');
+        }
+
+    </script>
+</body>
+
+</html>
+<style>
+    body {
+        background: black linear-gradient(45deg, blue, green, orange, red, white, silver);
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+
+    #tura {
+        font-size: 28px;
+    }
+
+    #plansza {
+        min-height: 248px;
+        background-color: aliceblue;
+        border-radius: 8px;
+        width: 48%;
+        box-shadow: 0 0 28px rgb(26, 255, 0);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 100px;
+    }
+
+    .opcja {
+        width: 32%;
+        height: 88px;
+        float: left;
+        padding: 1px;
+        border: 1px solid black;
+        font-size: 68px;
+        font-weight: 900;
+        text-align: center;
+        text-shadow: 4px 4px 4px green;
+        cursor: pointer;
+    }
+
+    .opcja:hover {
+        background: silver;
+    }
+
+    @media screen and (max-device-width:1000px) {
+        #plansza {
+            width: 98%;
+        }
+    }
+</style>
